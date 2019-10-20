@@ -1,0 +1,12 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "eslint.alwaysShowStatus": true,
+  "eslint.autoFixOnSave": true,
+  "eslint.enable": true,
+  "eslint.validate": [
+      { "language": "vue", "autoFix": true },
+      { "language": "html", "autoFix": true },
+      { "language": "vue-html", "autoFix": true },
+      { "language": "javascript", "autoFix": true }
+  ],
+}
