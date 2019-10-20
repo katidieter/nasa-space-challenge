@@ -1,6 +1,6 @@
 <template>
   <div id="disaster-map">
-    <h1>AQUI VAI VIM O MAPA</h1>
+    <h3>OCORRÊNCIAS PERTO DE VOCÊ</h3>
     <SearchAddressCoord/>
     <GmapMap
       :center="currentLocation"

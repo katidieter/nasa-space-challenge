@@ -2,7 +2,7 @@
   <div id="map">
     <input name="address" type="test" v-model="address" />
     {{ coordinate.lat }}{{ coordinate.lng }}
-    <button v-on:click="getCoordinates">find</button>
+    <button v-on:click="getCoordinates">Ir para</button>
   </div>
 </template>
 
