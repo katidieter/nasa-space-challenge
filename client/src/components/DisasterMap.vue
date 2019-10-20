@@ -1,22 +1,22 @@
 <template>
   <div id="disaster-map">
     <h1>AQUI VAI VIM O MAPA</h1>
-    <h2>{{disasters[0].categories[0].title}}</h2>
     <GmapMap
-      :center="{lat:10, lng:10}"
+      :center="currentLocation"
       :zoom="7"
       map-type-id="terrain"
       style="width: 500px; height: 300px"
     >
       <GmapMarker
         :key="index"
-        v-for="(m, index) in markers"
-        :position="m.position"
+        v-for="(marker, index) in markers"
+        :position="marker"
         :clickable="true"
         :draggable="true"
-        @click="center=m.position"
+        @click="center=marker"
       />
     </GmapMap>
+    {{markers[0]}}
   </div>
 </template>
 
@@ -37,10 +37,30 @@ export default {
       loading: true,
     };
   },
-  created() {
-    Promise.all(
+  async created() {
+    await Promise.all(
       CATEGORIES.map(category => this.fetchDisasterByCategoryId(category.id)),
-    ).then(() => console.log(this.disasters));
+    );
+    // console.log(this.disasters);
+  },
+  computed: {
+    currentLocation() {
+      return { lat: -30.0277, lng: -51.2287 };
+    },
+    markers() {
+      if (this.loading) return { lat: 75.498046875, lng: 12.945675729694095 };
+      return this.disasters.map((disaster) => {
+        const { coordinates } = disaster.geometries[0];
+        // eslint-disable-next-line
+        const latitude = isNaN(coordinates[0]) ? coordinates[0][0][0] : coordinates[0];
+        // eslint-disable-next-line
+        const longitude = isNaN(coordinates[0]) ? coordinates[0][0][1] : coordinates[1];
+        return {
+          lat: latitude,
+          lng: longitude,
+        };
+      });
+    },
   },
   methods: {
     fetchDisasterByCategoryId(id) {
@@ -48,6 +68,7 @@ export default {
         .get(`https://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/${id}?status=closed`)
         .then((response) => {
           this.disasters.push(...response.data.events);
+          this.loading = false;
         });
     },
   },
