@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 
 mongoose
-  .connect("mongodb://localhost/nasa-space-apps", {useUnifiedTopology: true})
+  .connect("mongodb+srv://nasasun:jeOUG0cHXDSwHJZGwisO@nasa-sun-ywqtd.azure.mongodb.net/test?retryWrites=true&w=majority", {useUnifiedTopology: true})
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 
