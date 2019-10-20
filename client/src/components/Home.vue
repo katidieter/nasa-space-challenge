@@ -1,9 +1,9 @@
 <template>
   <div id="home">
-     <h1>FAÇA SOL</h1>
-      <nav>
-        <router-link to='/map'>Mapa</router-link>
-      </nav>
+    <h1>FAÇA SOL</h1>
+    <nav>
+      <router-link to="/map">Mapa</router-link>
+    </nav>
   </div>
 </template>
 
@@ -14,5 +14,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

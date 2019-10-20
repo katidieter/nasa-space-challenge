@@ -1,6 +1,7 @@
 <template>
   <div id="disaster-map">
     <h1>AQUI VAI VIM O MAPA</h1>
+    <SearchAddressCoord/>
     <h2>{{disasters[0].categories[0].title}}</h2>
     <GmapMap
       :center="{lat:10, lng:10}"
@@ -22,6 +23,7 @@
 
 <script>
 import axios from 'axios';
+import SearchAddressCoord from './SearchAddressCoord.vue';
 
 const CATEGORIES = [
   { id: 9, name: 'Floods' },
@@ -36,6 +38,9 @@ export default {
       disasters: [],
       loading: true,
     };
+  },
+  components: {
+    SearchAddressCoord,
   },
   created() {
     Promise.all(
