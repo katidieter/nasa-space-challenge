@@ -6,7 +6,7 @@ import routes from './routes';
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyBgXgt7_49qViyPRmopYsToHHRyvDJOrqc',
+    key: 'AIzaSyBxBoZpytJVnJQKAzRQgKiV-KGUh_B9BZk',
     libraries: 'places,drawing,visualization',
   },
 });
