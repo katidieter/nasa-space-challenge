@@ -16,6 +16,10 @@
         :draggable="true"
         @click="center=marker"
       />
+      <GmapPolyline
+        :key="index"
+        v-for="(path, index) in paths"
+        :path="path" />
     </GmapMap>
   </div>
 </template>
@@ -53,17 +57,39 @@ export default {
     },
     markers() {
       if (this.loading) return { lat: 75.498046875, lng: 12.945675729694095 };
-      return this.disasters.map((disaster) => {
-        const { coordinates } = disaster.geometries[0];
-        // eslint-disable-next-line
-        const latitude = isNaN(coordinates[0]) ? coordinates[0][0][0] : coordinates[0];
-        // eslint-disable-next-line
-        const longitude = isNaN(coordinates[0]) ? coordinates[0][0][1] : coordinates[1];
-        return {
-          lat: latitude,
-          lng: longitude,
-        };
+      const disasters = [];
+      this.disasters.forEach((disaster) => {
+        const { geometries } = disaster;
+        geometries.forEach((geometry) => {
+          if (geometry.type === 'Point') {
+            disasters.push({ lat: geometry.coordinates[1], lng: geometry.coordinates[0] });
+          }
+        });
       });
+      return disasters;
+    },
+    paths() {
+      const disasters = [];
+      this.disasters.forEach((disaster) => {
+        const { geometries } = disaster;
+        const paths = [];
+        geometries.forEach((geometry) => {
+          if (geometry.type === 'Polygon') {
+            geometry.coordinates.forEach((coord) => {
+              const path = [];
+              coord.forEach((coordb) => {
+                const a = { lat: coordb[1], lng: coordb[0] };
+                path.push(a);
+              });
+              paths.push(path);
+            });
+          }
+        });
+        if (paths.length > 0) {
+          disasters.push(paths);
+        }
+      });
+      return disasters;
     },
   },
   methods: {
