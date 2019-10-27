@@ -16,10 +16,7 @@
         :draggable="true"
         @click="center=marker"
       />
-      <GmapPolyline
-        :key="index"
-        v-for="(path, index) in paths"
-        :path="path" />
+
     </GmapMap>
   </div>
 </template>
@@ -56,13 +53,16 @@ export default {
       return { lat: -30.0277, lng: -51.2287 };
     },
     markers() {
-      if (this.loading) return { lat: 75.498046875, lng: 12.945675729694095 };
+      if (this.loading) return [this.currentLocation];
       const disasters = [];
       this.disasters.forEach((disaster) => {
         const { geometries } = disaster;
         geometries.forEach((geometry) => {
           if (geometry.type === 'Point') {
-            disasters.push({ lat: geometry.coordinates[1], lng: geometry.coordinates[0] });
+            // eslint-disable-next-line no-restricted-globals
+            if (!isNaN(geometry.coordinates[1]) && !isNaN(geometry.coordinates[0])) {
+              disasters.push({ lat: geometry.coordinates[1], lng: geometry.coordinates[0] });
+            }
           }
         });
       });
