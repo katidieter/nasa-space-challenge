@@ -1,6 +1,6 @@
 <template>
-  <div id="map">
-    <input name="address" type="test" v-model="address" />
+  <div id="search-address">
+    <input name="address" type="text" v-model="address" />
     {{ coordinate.lat }}{{ coordinate.lng }}
     <button v-on:click="getCoordinates">Ir para</button>
   </div>
@@ -33,4 +33,18 @@ export default {
 </script>
 
 <style scoped>
+#search-address {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 1rem 0;
+}
+input {
+  font-size: 20px;
+}
+
+button {
+  font-size: 20px;
+}
 </style>

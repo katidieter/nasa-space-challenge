@@ -1,12 +1,12 @@
 <template>
   <div id="disaster-map">
     <h3>OCORRÊNCIAS PERTO DE VOCÊ</h3>
-    <SearchAddressCoord/>
+    <SearchAddress/>
     <GmapMap
       :center="currentLocation"
-      :zoom="7"
+      :zoom="10"
       map-type-id="terrain"
-      style="width: 500px; height: 300px"
+      style="width: 100%; height: 100vh"
     >
       <GmapMarker
         :key="index"
@@ -26,7 +26,7 @@
 
 <script>
 import axios from 'axios';
-import SearchAddressCoord from './SearchAddressCoord.vue';
+import SearchAddress from './SearchAddress.vue';
 
 const CATEGORIES = [
   { id: 9, name: 'Floods' },
@@ -43,13 +43,13 @@ export default {
     };
   },
   components: {
-    SearchAddressCoord,
+    SearchAddress,
   },
   async created() {
     await Promise.all(
       CATEGORIES.map(category => this.fetchDisasterByCategoryId(category.id)),
     );
-    // console.log(this.disasters);
+    console.log(this.disasters);
   },
   computed: {
     currentLocation() {
@@ -95,7 +95,7 @@ export default {
   methods: {
     fetchDisasterByCategoryId(id) {
       return axios
-        .get(`https://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/${id}?status=closed`)
+        .get(`https://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/${id}?status=closed&days=365`)
         .then((response) => {
           this.disasters.push(...response.data.events);
           this.loading = false;
@@ -106,5 +106,7 @@ export default {
 </script>
 
 <style scoped>
-
+h3 {
+  text-align: left;
+}
 </style>
