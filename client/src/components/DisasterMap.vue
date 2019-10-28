@@ -1,6 +1,8 @@
 <template>
   <div id="disaster-map">
-    <h3>OCORRÊNCIAS PERTO DE VOCÊ</h3>
+    <div class="disaster-map__title">
+      OCORRÊNCIAS PERTO DE VOCÊ
+    </div>
     <SearchAddress/>
     <GmapMap
       :center="currentLocation"
@@ -10,13 +12,14 @@
     >
       <GmapMarker
         :key="index"
-        v-for="(marker, index) in markers"
-        :position="marker"
+        v-for="(disasterPoint, index) in disastersPoints"
+        :position="disasterPoint"
         :clickable="true"
         :draggable="true"
-        @click="center=marker"
+        @click="center=disasterPoint"
       />
 
+      <GmapPolygon :paths="disastersPaths"/>
     </GmapMap>
   </div>
 </template>
@@ -27,7 +30,7 @@ import SearchAddress from './SearchAddress.vue';
 
 const CATEGORIES = [
   { id: 9, name: 'Floods' },
-  { id: 10, name: 'Severe Storms' },
+  // { id: 10, name: 'Severe Storms' },
   { id: 14, name: 'Landslides' },
 ];
 
@@ -46,56 +49,50 @@ export default {
     await Promise.all(
       CATEGORIES.map(category => this.fetchDisasterByCategoryId(category.id)),
     );
-    console.log(this.disasters);
   },
   computed: {
     currentLocation() {
       return { lat: -30.0277, lng: -51.2287 };
     },
-    markers() {
-      if (this.loading) return [this.currentLocation];
-      const disasters = [];
+    disastersPoints() {
+      const pointMakers = [];
+      if (this.loading) return pointMakers;
       this.disasters.forEach((disaster) => {
         const { geometries } = disaster;
         geometries.forEach((geometry) => {
           if (geometry.type === 'Point') {
-            // eslint-disable-next-line no-restricted-globals
-            if (!isNaN(geometry.coordinates[1]) && !isNaN(geometry.coordinates[0])) {
-              disasters.push({ lat: geometry.coordinates[1], lng: geometry.coordinates[0] });
-            }
+            pointMakers.push({ lat: geometry.coordinates[1], lng: geometry.coordinates[0] });
           }
         });
       });
-      return disasters;
+      return pointMakers;
     },
-    paths() {
-      const disasters = [];
+    disastersPaths() {
+      const polygonsPaths = [];
+      if (this.loading) return polygonsPaths;
       this.disasters.forEach((disaster) => {
         const { geometries } = disaster;
         const paths = [];
         geometries.forEach((geometry) => {
           if (geometry.type === 'Polygon') {
-            geometry.coordinates.forEach((coord) => {
-              const path = [];
-              coord.forEach((coordb) => {
-                const a = { lat: coordb[1], lng: coordb[0] };
-                path.push(a);
+            geometry.coordinates.forEach((coordinateGroup) => {
+              coordinateGroup.forEach((coordinate) => {
+                paths.push({ lat: coordinate[1], lng: coordinate[0] });
               });
-              paths.push(path);
             });
           }
         });
         if (paths.length > 0) {
-          disasters.push(paths);
+          polygonsPaths.push(paths);
         }
       });
-      return disasters;
+      return polygonsPaths;
     },
   },
   methods: {
     fetchDisasterByCategoryId(id) {
       return axios
-        .get(`https://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/${id}?status=closed&days=365`)
+        .get(`https://eonet.sci.gsfc.nasa.gov/api/v2.1/categories/${id}?status=closed`)
         .then((response) => {
           this.disasters.push(...response.data.events);
           this.loading = false;
@@ -106,7 +103,9 @@ export default {
 </script>
 
 <style scoped>
-h3 {
+.disaster-map__title {
   text-align: left;
+  font-weight: 600;
+  font-size: 22px;
 }
 </style>
